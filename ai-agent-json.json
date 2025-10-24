@@ -1,0 +1,184 @@
+{
+  "name": "First AI Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -368,
+        464
+      ],
+      "id": "be4697bd-afb4-4572-a128-a52b42b7a141",
+      "name": "When chat message received",
+      "webhookId": "41fc16bd-0220-49b5-976f-992acfea847d"
+    },
+    {
+      "parameters": {
+        "options": {
+          "systemMessage": "Role:\nYou are an AI Agent that automates email communication using Google tools.\n\nGoal:\nWhen a user provides a message and a contact name in the chat, your job is to:\n\n1. Find the correct email address using the Google Contacts tool.\n\n\n2. Use the Gmail tool to send one (and only one) email to that address.\n"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 2.2,
+      "position": [
+        -16,
+        496
+      ],
+      "id": "e244fc67-b7eb-4b57-98f4-b06ee579ea8c",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        -304,
+        688
+      ],
+      "id": "07d5e7c0-6ebb-4821-8b2a-250ae5a3c329",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "rAywDCFxptuzagKY",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "contextWindowLength": 10
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        -96,
+        688
+      ],
+      "id": "373adac3-a916-49be-a424-2021d9a5f81f",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('To', ``, 'string') }}",
+        "subject": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Subject', ``, 'string') }}",
+        "message": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Message', ``, 'string') }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmailTool",
+      "typeVersion": 2.1,
+      "position": [
+        64,
+        656
+      ],
+      "id": "d5e339b0-75d2-405d-bf1b-11ff538f5d84",
+      "name": "Send a message in Gmail",
+      "webhookId": "ec3bcedf-829f-41b6-a746-47176a95d162",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "mAFNu3YPGKnghPcR",
+          "name": "Gmail account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "limit": 1,
+        "fields": [
+          "emailAddresses",
+          "names"
+        ],
+        "useQuery": true,
+        "query": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Query', ``, 'string') }}"
+      },
+      "type": "n8n-nodes-base.googleContactsTool",
+      "typeVersion": 1,
+      "position": [
+        256,
+        640
+      ],
+      "id": "53342e36-e4e9-4d43-81de-c8073d94f7c9",
+      "name": "Get many contacts in Google Contacts",
+      "credentials": {
+        "googleContactsOAuth2Api": {
+          "id": "5PMjPsHef8eA8MKz",
+          "name": "Google Contacts account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Send a message in Gmail": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get many contacts in Google Contacts": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "a93de101-bf4c-4e24-bd19-b3d5d8e82e97",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "d38f59bd96581e5f77bedf04a74245a03075b23731406ec3a0357ef893aab9b8"
+  },
+  "id": "EoUjKAy22jIf56hr",
+  "tags": []
+}
